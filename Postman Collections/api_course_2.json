@@ -1,0 +1,2218 @@
+{
+  "info": {
+    "_postman_id": "daa0cba8-af21-4011-b336-bdf2d9099f74",
+    "name": "UPDATED xapi tests!",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create address - for",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "88833fbf-66b3-4d89-90c2-d5979b71d30a",
+            "exec": [
+              "var jsonData = pm.response.json();\r",
+              "\r",
+              "pm.test (\"addressIfKeyNotExists\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "\r",
+              "for (var i = 0; i < jsonData.data.updateMemberAddresses.addresses.length; i ++) {\r",
+              "pm.test(\"for: first name:\" +\" new name \" + i, function () {\r",
+              "    console.log(jsonData.data.updateMemberAddresses.addresses[i])\r",
+              "})};\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "2c39dfa9-3201-4ea2-98e8-9066748d071e",
+            "exec": [
+              "pm.variables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'));\r",
+              "pm.variables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'));\r",
+              "pm.variables.set(\"line1\", pm.variables.replaceIn('street {{$randomStreetName}}'));\r",
+              "pm.variables.set(\"phone\", pm.variables.replaceIn('{{$randomPhoneNumber}}'));\r",
+              "pm.variables.set(\"email\", pm.variables.replaceIn('Useremail{{$randomInt}}@usermail.com'));\r",
+              "pm.variables.set(\"countryCode\", pm.variables.replaceIn('{{$randomCountryCode}}'));\r",
+              "pm.variables.set(\"countryCode\", pm.variables.replaceIn('{{$randomCountryCode}}'));\r",
+              "pm.variables.set(\"city\", pm.variables.replaceIn('{{$randomCity}}'));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "9d54615b-123c-4c6e-94fa-8c6d653faab7",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation updateMemberAddresses($command: InputUpdateMemberAddressType!) {\r\nupdateMemberAddresses(command: $command) {\r\nmemberType\r\naddresses {\r\nkey\r\nfirstName\r\nlastName\r\nline1\r\nphone\r\nemail\r\ncountryCode\r\ncountryName\r\npostalCode\r\ncity\r\n}\r\n}\r\n}",
+            "variables": "{\r\n\"command\": {\r\n\"memberId\": \"{{organization_id}}\",\r\n\"addresses\": [{\r\n\"key\": \"Id of the Address_2\",\r\n\"firstName\":\"{{firstName}}\",\r\n\"lastName\": \"{{lastName}}\",\r\n\"line1\": \"{{line1}}\",\r\n\"phone\": \"{{phone}}\",\r\n\"email\": \"{{email}}\",\r\n\"countryCode\": \"{{countryCode}}\",\r\n\"countryName\": \"{{countryCode}}\",\r\n\"postalCode\": \"123456\",\r\n\"city\": \"{{city}}\"\r\n}]\r\n}\r\n}"
+          },
+          "options": {
+            "graphql": {}
+          }
+        },
+        "url": "{{url}}"
+      },
+      "response": []
+    },
+    {
+      "name": "Address while for forEach =>",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "1c19fa22-2c74-44df-9b02-36838d085960",
+            "exec": [
+              "var jsonData = pm.response.json();\r",
+              "/*\r",
+              "pm.test (\"addressIfKeyEmpty\", function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "// СОЗДАНИЕ ЦИКЛА\r",
+              "pm.test(\"first name\", function () {\r",
+              "    pm.expect(jsonData.data.organization.addresses.items[0].firstName).to.eql(\"new name\");\r",
+              "});\r",
+              "\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "// проверка длины массивы\r",
+              "pm.test(\"array length\", function () {\r",
+              "    pm.expect(jsonData.data.organization.addresses.items).to.be.length(9);\r",
+              "});\r",
+              "\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "//while\r",
+              "items = 0\r",
+              "while (items < jsonData.data.organization.addresses.items.length){\r",
+              "    pm.test(\"while: first name:\" +\" new name \" + items, function () {\r",
+              "    pm.expect(jsonData.data.organization.addresses.items[items].firstName).to.eql(\"new name\")\r",
+              "    console.log(jsonData.data.organization.addresses.items[items].firstName)\r",
+              "});\r",
+              "    items ++\r",
+              "}\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "//for\r",
+              "for (var i = 0; i < jsonData.data.organization.addresses.items.length; i ++) {\r",
+              "pm.test(\"for: first name:\" +\" new name \" + i, function () {\r",
+              "    pm.expect(jsonData.data.organization.addresses.items[i].firstName).to.eql(\"new name\")\r",
+              "    console.log(jsonData.data.organization.addresses.items[i].firstName)\r",
+              "})};\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "//все 3 записи ниже выведут одинаковое значение на консоль\r",
+              "// 1\r",
+              "for (var i = 0; i < jsonData.data.organization.addresses.items.length; i ++) {\r",
+              "  console.log(jsonData.data.organization.addresses.items[i])\r",
+              "};\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "//forEach \r",
+              "//2 и 3\r",
+              "jsonData.data.organization.addresses.items.forEach (element => console.log (element));\r",
+              "jsonData.data.organization.addresses.items.forEach (function (element) {console.log (element)});\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "// если необходимо провести действие с каждым элементом  массива\r",
+              "jsonData.data.organization.addresses.items.forEach (element => {\r",
+              "    console.log (element);\r",
+              "    console.log (\"break\");\r",
+              "    }\r",
+              "    );\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "// ДОБАВЛЕНИЕ ФУНКЦИИ\r",
+              "// вывод элементов с номерами\r",
+              "function myFunction (item, index){\r",
+              "    console.log (item);\r",
+              "    console.log (index);\r",
+              "}\r",
+              "jsonData.data.organization.addresses.items.forEach (myFunction);\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "// вывод элементов с номерами в одну строку\r",
+              "function myFunction2 (item, index){\r",
+              "    console.log (index + \" элемент: \" + item);\r",
+              "}\r",
+              "jsonData.data.organization.addresses.items.forEach (myFunction2);\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "\r",
+              "// использование 3х параметров:item - указание контректного элементав массиве, index - вывод порядок элемента, arr - если необходимо как-то видоизменять массив\r",
+              "function myFunction3 (item, index, arr){\r",
+              "    arr [index] = item +\" текст\"\r",
+              "    console.log (index + \" элемент: \" + arr [index]);\r",
+              "}\r",
+              "jsonData.data.organization.addresses.items.forEach (myFunction3);\r",
+              "console.log(\"*****************************************************\")\r",
+              "*/\r",
+              "\r",
+              "// запись выше и ниже  - одинаковые\r",
+              "items = jsonData.data.organization.addresses.items\r",
+              "function myFunction4 (item, index, arr){\r",
+              "    arr [index] = item +\" текст1\"\r",
+              "    console.log (index + \" элемент: \" + arr [index]);\r",
+              "}\r",
+              "items.forEach (myFunction4);"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "d909ea0b-07a8-4377-9e20-bd8015e75e87",
+            "exec": [
+              "/*pm.variables.set(\"key\", \"value\");\r",
+              "// обращение к переменной: pm.variables.get(\"key\");\r",
+              "pm.variables.get(\"key\");\r",
+              "console.log(pm.variables.get(\"key\"));*/"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "f05315b2-d78d-4633-9dce-01d00712fdb8",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query getOrganizationAddresses($id: String!, $count: Int, $cursor: String, $sort: String) {\r\norganization(id: $id) {\r\nname \r\naddresses(first: $count, after: $cursor, sort: $sort) {\r\ntotalCount\r\npageInfo {\r\nendCursor\r\nhasNextPage\r\nhasPreviousPage\r\nstartCursor\r\n}\r\nitems {\r\nfirstName\r\nlastName\r\nline1\r\nphone\r\nemail\r\ncountryCode\r\npostalCode\r\ncity\r\n}\r\n}\r\n}\r\n}",
+            "variables": "{\r\n\"id\": \"{{organization_id}}\"\r\n}"
+          },
+          "options": {
+            "graphql": {}
+          }
+        },
+        "url": "{{url}}"
+      },
+      "response": []
+    },
+    {
+      "name": "Address while for forEach =>",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "e360e695-4a15-4fcc-a1e4-2d6b10583ba3",
+            "exec": [
+              "var jsonData = pm.response.json();\r",
+              "\r",
+              "/*\r",
+              "// СОЗДАНИЕ ЦИКЛА\r",
+              "pm.test(\"first name\", function () {\r",
+              "    pm.expect(jsonData.data.organization.addresses.items[0].firstName).to.eql(\"new name\");\r",
+              "});\r",
+              "\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "// проверка длины массивы для отладки\r",
+              "pm.test(\"array length\", function () {\r",
+              "    pm.expect(jsonData.data.organization.addresses.items).to.be.length(9);\r",
+              "});\r",
+              "\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "\r",
+              "//WHILE \r",
+              "items = 0\r",
+              "while (items < jsonData.data.organization.addresses.items.length){\r",
+              "    pm.test(\"while: first name:\" +\" new name \" + items, function () {\r",
+              "    pm.expect(jsonData.data.organization.addresses.items[items].firstName).to.eql(\"new name\")\r",
+              "    console.log(jsonData.data.organization.addresses.items[items].firstName)\r",
+              "});\r",
+              "    items ++\r",
+              "}\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "\r",
+              "//FOR\r",
+              "for (var i = 0; i < jsonData.data.organization.addresses.items.length; i ++) {\r",
+              "pm.test(\"for: first name:\" +\" new name \" + i, function () {\r",
+              "    pm.expect(jsonData.data.organization.addresses.items[i].firstName).to.eql(\"new name\")\r",
+              "    console.log(jsonData.data.organization.addresses.items[i].firstName)\r",
+              "})};\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "\r",
+              "// FOREACH\r",
+              "// для теста forEach  через => не получиться так как не выведется номерация, нужен индекс \r",
+              "jsonData.data.organization.addresses.items.forEach (function (element, i)\r",
+              "{\r",
+              "pm.test(\"forEach: first name:\" +\" new name \" + i, function () {\r",
+              "    pm.expect(element.firstName).to.eql(\"new name\");\r",
+              "});\r",
+              "}\r",
+              ");\r",
+              "\r",
+              "\r",
+              "//ВЫВЕДЕНИЕ НА КОНСОЛЬ FOR FOREACH\r",
+              "// записи 1-4 ниже выведут одинаковое значение на консоль\r",
+              "// 1- for\r",
+              "for (var i = 0; i < jsonData.data.organization.addresses.items.length; i ++) {\r",
+              "  console.log(jsonData.data.organization.addresses.items[i])\r",
+              "};\r",
+              "\r",
+              "\r",
+              "//2 и 3 - forEach-короткие записи для отладки\r",
+              "//2\r",
+              "jsonData.data.organization.addresses.items.forEach (element => console.log (element));\r",
+              "\r",
+              "//при  этом запись с указанием ключа firstName- покажется не весь объект, а только его значение\r",
+              "jsonData.data.organization.addresses.items.forEach (element => console.log (element.firstName));\r",
+              "\r",
+              "//3\r",
+              "\r",
+              "// 4 - forEach - если необходимо провести действие с каждым элементом  массива\r",
+              "jsonData.data.organization.addresses.items.forEach (element => {\r",
+              "    console.log (element);\r",
+              "    console.log (\"break\");\r",
+              "    }\r",
+              "    );\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "\r",
+              "\r",
+              "/*\r",
+              "// ДОБАВЛЕНИЕ ФУНКЦИИ\r",
+              "// вывод элементов с номерами\r",
+              "function myFunction (item, index){\r",
+              "    console.log (item);\r",
+              "    console.log (index);\r",
+              "}\r",
+              "jsonData.data.organization.addresses.items.forEach (myFunction);\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "\r",
+              "// вывод элементов с номерами в одну строку\r",
+              "function myFunction2 (item, index){\r",
+              "    console.log (index + \" элемент: \" + item);\r",
+              "}\r",
+              "jsonData.data.organization.addresses.items.forEach (myFunction2);\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "\r",
+              "// использование 3х параметров:item - указание контректного элементав массиве, index - вывод порядок элемента, arr - если необходимо как-то видоизменять массив\r",
+              "function myFunction3 (item, index, arr){\r",
+              "    arr [index] = item +\" текст\"\r",
+              "    console.log (index + \" элемент: \" + arr [index]);\r",
+              "}\r",
+              "jsonData.data.organization.addresses.items.forEach (myFunction3);\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "\r",
+              "// запись выше и ниже  - одинаковые\r",
+              "items = jsonData.data.organization.addresses.items\r",
+              "function myFunction4 (item, index, arr){\r",
+              "    arr [index] = item +\" текст1\"\r",
+              "    console.log (index + \" элемент: \" + arr [index]);\r",
+              "}\r",
+              "items.forEach (myFunction4);*/\r",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "01f812c8-6ada-40e3-8ace-e71eefd47add",
+            "exec": [
+              "/*pm.variables.set(\"key\", \"value\");\r",
+              "// обращение к переменной: pm.variables.get(\"key\");\r",
+              "pm.variables.get(\"key\");\r",
+              "console.log(pm.variables.get(\"key\"));*/"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "e28664e6-fa8f-402f-8766-79636d527f35",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query getOrganizationAddresses($id: String!, $count: Int, $cursor: String, $sort: String) {\r\norganization(id: $id) {\r\nname \r\naddresses(first: $count, after: $cursor, sort: $sort) {\r\ntotalCount\r\npageInfo {\r\nendCursor\r\nhasNextPage\r\nhasPreviousPage\r\nstartCursor\r\n}\r\nitems {\r\nfirstName\r\nlastName\r\nline1\r\nphone\r\nemail\r\ncountryCode\r\npostalCode\r\nregionName\r\ncity\r\n}\r\n}\r\n}\r\n}",
+            "variables": "{\r\n\"id\": \"{{organization_id}}\"\r\n}"
+          },
+          "options": {
+            "graphql": {}
+          }
+        },
+        "url": "{{url}}"
+      },
+      "response": []
+    },
+    {
+      "name": "schema tiny validator",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "82f7cc2c-40df-4c01-8f6d-d7c6f1f32fda",
+            "exec": [
+              "// константу ниже преобразовали ответ через чайт https://jsonschema.net/home и вставили в константу\r",
+              "\r",
+              "const schema = {\r",
+              "    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+              "    \"$id\": \"http://example.com/example.json\",\r",
+              "    \"type\": \"object\",\r",
+              "    \"title\": \"The root schema\",\r",
+              "    \"description\": \"The root schema comprises the entire JSON document.\",\r",
+              "    \"default\": {},\r",
+              "    \"examples\": [\r",
+              "        {\r",
+              "            \"data\": {\r",
+              "                \"organization\": {\r",
+              "                    \"name\": \"Organization_QA_619\",\r",
+              "                    \"addresses\": {\r",
+              "                        \"totalCount\": 1,\r",
+              "                        \"pageInfo\": {\r",
+              "                            \"endCursor\": \"1\",\r",
+              "                            \"hasNextPage\": false,\r",
+              "                            \"hasPreviousPage\": false,\r",
+              "                            \"startCursor\": \"0\"\r",
+              "                        },\r",
+              "                        \"items\": [\r",
+              "                            {\r",
+              "                                \"firstName\": null,\r",
+              "                                \"lastName\": null,\r",
+              "                                \"line1\": \"street Pagac Stravenue\",\r",
+              "                                \"phone\": null,\r",
+              "                                \"email\": null,\r",
+              "                                \"countryCode\": \"AL\",\r",
+              "                                \"postalCode\": \"830000\",\r",
+              "                                \"regionName\": null,\r",
+              "                                \"city\": \"Lake Shane\"\r",
+              "                            }\r",
+              "                        ]\r",
+              "                    }\r",
+              "                }\r",
+              "            }\r",
+              "        }\r",
+              "    ],\r",
+              "    \"required\": [\r",
+              "        \"data\"\r",
+              "    ],\r",
+              "    \"properties\": {\r",
+              "        \"data\": {\r",
+              "            \"$id\": \"#/properties/data\",\r",
+              "            \"type\": \"object\",\r",
+              "            \"title\": \"The data schema\",\r",
+              "            \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "            \"default\": {},\r",
+              "            \"examples\": [\r",
+              "                {\r",
+              "                    \"organization\": {\r",
+              "                        \"name\": \"Organization_QA_619\",\r",
+              "                        \"addresses\": {\r",
+              "                            \"totalCount\": 1,\r",
+              "                            \"pageInfo\": {\r",
+              "                                \"endCursor\": \"1\",\r",
+              "                                \"hasNextPage\": false,\r",
+              "                                \"hasPreviousPage\": false,\r",
+              "                                \"startCursor\": \"0\"\r",
+              "                            },\r",
+              "                            \"items\": [\r",
+              "                                {\r",
+              "                                    \"firstName\": null,\r",
+              "                                    \"lastName\": null,\r",
+              "                                    \"line1\": \"street Pagac Stravenue\",\r",
+              "                                    \"phone\": null,\r",
+              "                                    \"email\": null,\r",
+              "                                    \"countryCode\": \"AL\",\r",
+              "                                    \"postalCode\": \"830000\",\r",
+              "                                    \"regionName\": null,\r",
+              "                                    \"city\": \"Lake Shane\"\r",
+              "                                }\r",
+              "                            ]\r",
+              "                        }\r",
+              "                    }\r",
+              "                }\r",
+              "            ],\r",
+              "            \"required\": [\r",
+              "                \"organization\"\r",
+              "            ],\r",
+              "            \"properties\": {\r",
+              "                \"organization\": {\r",
+              "                    \"$id\": \"#/properties/data/properties/organization\",\r",
+              "// тип boolean вместо object\r",
+              "                    \"type\": \"boolean\",\r",
+              "                    \"title\": \"The organization schema\",\r",
+              "                    \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                    \"default\": {},\r",
+              "                    \"examples\": [\r",
+              "                        {\r",
+              "                            \"name\": \"Organization_QA_619\",\r",
+              "                            \"addresses\": {\r",
+              "                                \"totalCount\": 1,\r",
+              "                                \"pageInfo\": {\r",
+              "                                    \"endCursor\": \"1\",\r",
+              "                                    \"hasNextPage\": false,\r",
+              "                                    \"hasPreviousPage\": false,\r",
+              "                                    \"startCursor\": \"0\"\r",
+              "                                },\r",
+              "                                \"items\": [\r",
+              "                                    {\r",
+              "                                        \"firstName\": null,\r",
+              "                                        \"lastName\": null,\r",
+              "                                        \"line1\": \"street Pagac Stravenue\",\r",
+              "                                        \"phone\": null,\r",
+              "                                        \"email\": null,\r",
+              "                                        \"countryCode\": \"AL\",\r",
+              "                                        \"postalCode\": \"830000\",\r",
+              "                                        \"regionName\": null,\r",
+              "                                        \"city\": \"Lake Shane\"\r",
+              "                                    }\r",
+              "                                ]\r",
+              "                            }\r",
+              "                        }\r",
+              "                    ],\r",
+              "// name\r",
+              "                    \"required\": [\r",
+              "                        \"name1\",\r",
+              "                        \"addresses\"\r",
+              "                    ],\r",
+              "                    \"properties\": {\r",
+              "                        \"name\": {\r",
+              "                            \"$id\": \"#/properties/data/properties/organization/properties/name\",\r",
+              "                            \"type\": \"string\",\r",
+              "                            \"title\": \"The name schema\",\r",
+              "                            \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                            \"default\": \"\",\r",
+              "                            \"examples\": [\r",
+              "                                \"Organization_QA_619\"\r",
+              "                            ]\r",
+              "                        },\r",
+              "                        \"addresses\": {\r",
+              "                            \"$id\": \"#/properties/data/properties/organization/properties/addresses\",\r",
+              "                            \"type\": \"object\",\r",
+              "                            \"title\": \"The addresses schema\",\r",
+              "                            \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                            \"default\": {},\r",
+              "                            \"examples\": [\r",
+              "                                {\r",
+              "                                    \"totalCount\": 1,\r",
+              "                                    \"pageInfo\": {\r",
+              "                                        \"endCursor\": \"1\",\r",
+              "                                        \"hasNextPage\": false,\r",
+              "                                        \"hasPreviousPage\": false,\r",
+              "                                        \"startCursor\": \"0\"\r",
+              "                                    },\r",
+              "                                    \"items\": [\r",
+              "                                        {\r",
+              "                                            \"firstName\": null,\r",
+              "                                            \"lastName\": null,\r",
+              "                                            \"line1\": \"street Pagac Stravenue\",\r",
+              "                                            \"phone\": null,\r",
+              "                                            \"email\": null,\r",
+              "                                            \"countryCode\": \"AL\",\r",
+              "                                            \"postalCode\": \"830000\",\r",
+              "                                            \"regionName\": null,\r",
+              "                                            \"city\": \"Lake Shane\"\r",
+              "                                        }\r",
+              "                                    ]\r",
+              "                                }\r",
+              "                            ],\r",
+              "                            \"required\": [\r",
+              "                                \"totalCount\",\r",
+              "                                \"pageInfo\",\r",
+              "                                \"items\"\r",
+              "                            ],\r",
+              "                            \"properties\": {\r",
+              "                                \"totalCount\": {\r",
+              "                                    \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/totalCount\",\r",
+              "                                    \"type\": \"integer\",\r",
+              "                                    \"title\": \"The totalCount schema\",\r",
+              "                                    \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                    \"default\": 0,\r",
+              "                                    \"examples\": [\r",
+              "                                        1\r",
+              "                                    ]\r",
+              "                                },\r",
+              "                                \"pageInfo\": {\r",
+              "                                    \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/pageInfo\",\r",
+              "                                    \"type\": \"object\",\r",
+              "                                    \"title\": \"The pageInfo schema\",\r",
+              "                                    \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                    \"default\": {},\r",
+              "                                    \"examples\": [\r",
+              "                                        {\r",
+              "                                            \"endCursor\": \"1\",\r",
+              "                                            \"hasNextPage\": false,\r",
+              "                                            \"hasPreviousPage\": false,\r",
+              "                                            \"startCursor\": \"0\"\r",
+              "                                        }\r",
+              "                                    ],\r",
+              "                                    \"required\": [\r",
+              "                                        \"endCursor\",\r",
+              "                                        \"hasNextPage\",\r",
+              "                                        \"hasPreviousPage\",\r",
+              "                                        \"startCursor\"\r",
+              "                                    ],\r",
+              "                                    \"properties\": {\r",
+              "                                        \"endCursor\": {\r",
+              "                                            \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/pageInfo/properties/endCursor\",\r",
+              "                                            \"type\": \"string\",\r",
+              "                                            \"title\": \"The endCursor schema\",\r",
+              "                                            \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                            \"default\": \"\",\r",
+              "                                            \"examples\": [\r",
+              "                                                \"1\"\r",
+              "                                            ]\r",
+              "                                        },\r",
+              "                                        \"hasNextPage\": {\r",
+              "                                            \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/pageInfo/properties/hasNextPage\",\r",
+              "                                            \"type\": \"boolean\",\r",
+              "                                            \"title\": \"The hasNextPage schema\",\r",
+              "                                            \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                            \"default\": false,\r",
+              "                                            \"examples\": [\r",
+              "                                                false\r",
+              "                                            ]\r",
+              "                                        },\r",
+              "                                        \"hasPreviousPage\": {\r",
+              "                                            \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/pageInfo/properties/hasPreviousPage\",\r",
+              "                                            \"type\": \"boolean\",\r",
+              "                                            \"title\": \"The hasPreviousPage schema\",\r",
+              "                                            \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                            \"default\": false,\r",
+              "                                            \"examples\": [\r",
+              "                                                false\r",
+              "                                            ]\r",
+              "                                        },\r",
+              "                                        \"startCursor\": {\r",
+              "                                            \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/pageInfo/properties/startCursor\",\r",
+              "                                            \"type\": \"string\",\r",
+              "                                            \"title\": \"The startCursor schema\",\r",
+              "                                            \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                            \"default\": \"\",\r",
+              "                                            \"examples\": [\r",
+              "                                                \"0\"\r",
+              "                                            ]\r",
+              "                                        }\r",
+              "                                    },\r",
+              "                                    \"additionalProperties\": true\r",
+              "                                },\r",
+              "                                \"items\": {\r",
+              "                                    \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items\",\r",
+              "                                    \"type\": \"array\",\r",
+              "                                    \"title\": \"The items schema\",\r",
+              "                                    \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                    \"default\": [],\r",
+              "                                    \"examples\": [\r",
+              "                                        [\r",
+              "                                            {\r",
+              "                                                \"firstName\": null,\r",
+              "                                                \"lastName\": null,\r",
+              "                                                \"line1\": \"street Pagac Stravenue\",\r",
+              "                                                \"phone\": null,\r",
+              "                                                \"email\": null,\r",
+              "                                                \"countryCode\": \"AL\",\r",
+              "                                                \"postalCode\": \"830000\",\r",
+              "                                                \"regionName\": null,\r",
+              "                                                \"city\": \"Lake Shane\"\r",
+              "                                            }\r",
+              "                                        ]\r",
+              "                                    ],\r",
+              "                                    \"additionalItems\": true,\r",
+              "                                    \"items\": {\r",
+              "                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items\",\r",
+              "                                        \"anyOf\": [\r",
+              "                                            {\r",
+              "                                                \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0\",\r",
+              "                                                \"type\": \"object\",\r",
+              "                                                \"title\": \"The first anyOf schema\",\r",
+              "                                                \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                \"default\": {},\r",
+              "                                                \"examples\": [\r",
+              "                                                    {\r",
+              "                                                        \"firstName\": null,\r",
+              "                                                        \"lastName\": null,\r",
+              "                                                        \"line1\": \"street Pagac Stravenue\",\r",
+              "                                                        \"phone\": null,\r",
+              "                                                        \"email\": null,\r",
+              "                                                        \"countryCode\": \"AL\",\r",
+              "                                                        \"postalCode\": \"830000\",\r",
+              "                                                        \"regionName\": null,\r",
+              "                                                        \"city\": \"Lake Shane\"\r",
+              "                                                    }\r",
+              "                                                ],\r",
+              "                                                \"required\": [\r",
+              "                                                    \"firstName\",\r",
+              "                                                    \"lastName\",\r",
+              "                                                    \"line1\",\r",
+              "                                                    \"phone\",\r",
+              "                                                    \"email\",\r",
+              "                                                    \"countryCode\",\r",
+              "                                                    \"postalCode\",\r",
+              "                                                    \"regionName\",\r",
+              "                                                    \"city\"\r",
+              "                                                ],\r",
+              "                                                \"properties\": {\r",
+              "                                                    \"firstName\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/firstName\",\r",
+              "                                                        \"type\": \"null\",\r",
+              "                                                        \"title\": \"The firstName schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": null,\r",
+              "                                                        \"examples\": [\r",
+              "                                                            null\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"lastName\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/lastName\",\r",
+              "                                                        \"type\": \"null\",\r",
+              "                                                        \"title\": \"The lastName schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": null,\r",
+              "                                                        \"examples\": [\r",
+              "                                                            null\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"line1\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/line1\",\r",
+              "                                                        \"type\": \"string\",\r",
+              "                                                        \"title\": \"The line1 schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": \"\",\r",
+              "                                                        \"examples\": [\r",
+              "                                                            \"street Pagac Stravenue\"\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"phone\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/phone\",\r",
+              "                                                        \"type\": \"null\",\r",
+              "                                                        \"title\": \"The phone schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": null,\r",
+              "                                                        \"examples\": [\r",
+              "                                                            null\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"email\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/email\",\r",
+              "                                                        \"type\": \"null\",\r",
+              "                                                        \"title\": \"The email schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": null,\r",
+              "                                                        \"examples\": [\r",
+              "                                                            null\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"countryCode\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/countryCode\",\r",
+              "                                                        \"type\": \"string\",\r",
+              "                                                        \"title\": \"The countryCode schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": \"\",\r",
+              "                                                        \"examples\": [\r",
+              "                                                            \"AL\"\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"postalCode\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/postalCode\",\r",
+              "                                                        \"type\": \"string\",\r",
+              "                                                        \"title\": \"The postalCode schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": \"\",\r",
+              "                                                        \"examples\": [\r",
+              "                                                            \"830000\"\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"regionName\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/regionName\",\r",
+              "                                                        \"type\": \"null\",\r",
+              "                                                        \"title\": \"The regionName schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": null,\r",
+              "                                                        \"examples\": [\r",
+              "                                                            null\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"city\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/city\",\r",
+              "                                                        \"type\": \"string\",\r",
+              "                                                        \"title\": \"The city schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": \"\",\r",
+              "                                                        \"examples\": [\r",
+              "                                                            \"Lake Shane\"\r",
+              "                                                        ]\r",
+              "                                                    }\r",
+              "                                                },\r",
+              "                                                \"additionalProperties\": true\r",
+              "                                            }\r",
+              "                                        ]\r",
+              "                                    }\r",
+              "                                }\r",
+              "                            },\r",
+              "                            \"additionalProperties\": true\r",
+              "                        }\r",
+              "                    },\r",
+              "                    \"additionalProperties\": true\r",
+              "                }\r",
+              "            },\r",
+              "            \"additionalProperties\": true\r",
+              "        }\r",
+              "    },\r",
+              "    \"additionalProperties\": true\r",
+              "}\r",
+              "\r",
+              "var jsonData = pm.response.json();\r",
+              "\r",
+              "pm.test('Schema is valid', function() {\r",
+              "  pm.expect(tv4.validate(jsonData, schema)).to.be.true;\r",
+              "});\r",
+              "\r",
+              "console.log (tv4.error);\r",
+              "\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "933b1811-8c7a-49c0-b2a5-56f8e64db370",
+            "exec": [
+              "/*pm.variables.set(\"key\", \"value\");\r",
+              "// обращение к переменной: pm.variables.get(\"key\");\r",
+              "pm.variables.get(\"key\");\r",
+              "console.log(pm.variables.get(\"key\"));*/"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "c5b3257a-4928-4d98-b5b2-cab1a4abea01",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query getOrganizationAddresses($id: String!, $count: Int, $cursor: String, $sort: String) {\r\norganization(id: $id) {\r\nname \r\naddresses(first: $count, after: $cursor, sort: $sort) {\r\ntotalCount\r\npageInfo {\r\nendCursor\r\nhasNextPage\r\nhasPreviousPage\r\nstartCursor\r\n}\r\nitems {\r\nfirstName\r\nlastName\r\nline1\r\nphone\r\nemail\r\ncountryCode\r\npostalCode\r\nregionName\r\ncity\r\n}\r\n}\r\n}\r\n}",
+            "variables": "{\r\n\"id\": \"{{organization_id}}\"\r\n}"
+          },
+          "options": {
+            "graphql": {}
+          }
+        },
+        "url": "{{url}}"
+      },
+      "response": []
+    },
+    {
+      "name": "schema Ajv validator",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "b58a19f9-dd11-4af9-af5a-fee5d7cea77d",
+            "exec": [
+              "// константу ниже преобразовали ответ через чайт https://jsonschema.net/home и вставили в константу\r",
+              "\r",
+              "var Ajv = require('ajv'),\r",
+              "    ajv = new Ajv({logger: console}),\r",
+              "    schema = {\r",
+              "    \"$schema\": \"http://json-schema.org/draft-07/schema\",\r",
+              "    \"$id\": \"http://example.com/example.json\",\r",
+              "    \"type\": \"object\",\r",
+              "    \"title\": \"The root schema\",\r",
+              "    \"description\": \"The root schema comprises the entire JSON document.\",\r",
+              "    \"default\": {},\r",
+              "    \"examples\": [\r",
+              "        {\r",
+              "            \"data\": {\r",
+              "                \"organization\": {\r",
+              "                    \"name\": \"Organization_QA_619\",\r",
+              "                    \"addresses\": {\r",
+              "                        \"totalCount\": 1,\r",
+              "                        \"pageInfo\": {\r",
+              "                            \"endCursor\": \"1\",\r",
+              "                            \"hasNextPage\": false,\r",
+              "                            \"hasPreviousPage\": false,\r",
+              "                            \"startCursor\": \"0\"\r",
+              "                        },\r",
+              "                        \"items\": [\r",
+              "                            {\r",
+              "                                \"firstName\": null,\r",
+              "                                \"lastName\": null,\r",
+              "                                \"line1\": \"street Pagac Stravenue\",\r",
+              "                                \"phone\": null,\r",
+              "                                \"email\": null,\r",
+              "                                \"countryCode\": \"AL\",\r",
+              "                                \"postalCode\": \"830000\",\r",
+              "                                \"regionName\": null,\r",
+              "                                \"city\": \"Lake Shane\"\r",
+              "                            }\r",
+              "                        ]\r",
+              "                    }\r",
+              "                }\r",
+              "            }\r",
+              "        }\r",
+              "    ],\r",
+              "    \"required\": [\r",
+              "        \"data\"\r",
+              "    ],\r",
+              "    \"properties\": {\r",
+              "        \"data\": {\r",
+              "            \"$id\": \"#/properties/data\",\r",
+              "            \"type\": \"object\",\r",
+              "            \"title\": \"The data schema\",\r",
+              "            \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "            \"default\": {},\r",
+              "            \"examples\": [\r",
+              "                {\r",
+              "                    \"organization\": {\r",
+              "                        \"name\": \"Organization_QA_619\",\r",
+              "                        \"addresses\": {\r",
+              "                            \"totalCount\": 1,\r",
+              "                            \"pageInfo\": {\r",
+              "                                \"endCursor\": \"1\",\r",
+              "                                \"hasNextPage\": false,\r",
+              "                                \"hasPreviousPage\": false,\r",
+              "                                \"startCursor\": \"0\"\r",
+              "                            },\r",
+              "                            \"items\": [\r",
+              "                                {\r",
+              "                                    \"firstName\": null,\r",
+              "                                    \"lastName\": null,\r",
+              "                                    \"line1\": \"street Pagac Stravenue\",\r",
+              "                                    \"phone\": null,\r",
+              "                                    \"email\": null,\r",
+              "                                    \"countryCode\": \"AL\",\r",
+              "                                    \"postalCode\": \"830000\",\r",
+              "                                    \"regionName\": null,\r",
+              "                                    \"city\": \"Lake Shane\"\r",
+              "                                }\r",
+              "                            ]\r",
+              "                        }\r",
+              "                    }\r",
+              "                }\r",
+              "            ],\r",
+              "            \"required\": [\r",
+              "                \"organization\"\r",
+              "            ],\r",
+              "            \"properties\": {\r",
+              "                \"organization\": {\r",
+              "                    \"$id\": \"#/properties/data/properties/organization\",\r",
+              "// тип boolean вместо object\r",
+              "                    \"type\": \"boolean\",\r",
+              "                    \"title\": \"The organization schema\",\r",
+              "                    \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                    \"default\": {},\r",
+              "                    \"examples\": [\r",
+              "                        {\r",
+              "                            \"name\": \"Organization_QA_619\",\r",
+              "                            \"addresses\": {\r",
+              "                                \"totalCount\": 1,\r",
+              "                                \"pageInfo\": {\r",
+              "                                    \"endCursor\": \"1\",\r",
+              "                                    \"hasNextPage\": false,\r",
+              "                                    \"hasPreviousPage\": false,\r",
+              "                                    \"startCursor\": \"0\"\r",
+              "                                },\r",
+              "                                \"items\": [\r",
+              "                                    {\r",
+              "                                        \"firstName\": null,\r",
+              "                                        \"lastName\": null,\r",
+              "                                        \"line1\": \"street Pagac Stravenue\",\r",
+              "                                        \"phone\": null,\r",
+              "                                        \"email\": null,\r",
+              "                                        \"countryCode\": \"AL\",\r",
+              "                                        \"postalCode\": \"830000\",\r",
+              "                                        \"regionName\": null,\r",
+              "                                        \"city\": \"Lake Shane\"\r",
+              "                                    }\r",
+              "                                ]\r",
+              "                            }\r",
+              "                        }\r",
+              "                    ],\r",
+              "// name\r",
+              "                    \"required\": [\r",
+              "                        \"name1\",\r",
+              "                        \"addresses\"\r",
+              "                    ],\r",
+              "                    \"properties\": {\r",
+              "                        \"name\": {\r",
+              "                            \"$id\": \"#/properties/data/properties/organization/properties/name\",\r",
+              "                            \"type\": \"string\",\r",
+              "                            \"title\": \"The name schema\",\r",
+              "                            \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                            \"default\": \"\",\r",
+              "                            \"examples\": [\r",
+              "                                \"Organization_QA_619\"\r",
+              "                            ]\r",
+              "                        },\r",
+              "                        \"addresses\": {\r",
+              "                            \"$id\": \"#/properties/data/properties/organization/properties/addresses\",\r",
+              "                            \"type\": \"object\",\r",
+              "                            \"title\": \"The addresses schema\",\r",
+              "                            \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                            \"default\": {},\r",
+              "                            \"examples\": [\r",
+              "                                {\r",
+              "                                    \"totalCount\": 1,\r",
+              "                                    \"pageInfo\": {\r",
+              "                                        \"endCursor\": \"1\",\r",
+              "                                        \"hasNextPage\": false,\r",
+              "                                        \"hasPreviousPage\": false,\r",
+              "                                        \"startCursor\": \"0\"\r",
+              "                                    },\r",
+              "                                    \"items\": [\r",
+              "                                        {\r",
+              "                                            \"firstName\": null,\r",
+              "                                            \"lastName\": null,\r",
+              "                                            \"line1\": \"street Pagac Stravenue\",\r",
+              "                                            \"phone\": null,\r",
+              "                                            \"email\": null,\r",
+              "                                            \"countryCode\": \"AL\",\r",
+              "                                            \"postalCode\": \"830000\",\r",
+              "                                            \"regionName\": null,\r",
+              "                                            \"city\": \"Lake Shane\"\r",
+              "                                        }\r",
+              "                                    ]\r",
+              "                                }\r",
+              "                            ],\r",
+              "                            \"required\": [\r",
+              "                                \"totalCount\",\r",
+              "                                \"pageInfo\",\r",
+              "                                \"items\"\r",
+              "                            ],\r",
+              "                            \"properties\": {\r",
+              "                                \"totalCount\": {\r",
+              "                                    \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/totalCount\",\r",
+              "                                    \"type\": \"integer\",\r",
+              "                                    \"title\": \"The totalCount schema\",\r",
+              "                                    \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                    \"default\": 0,\r",
+              "                                    \"examples\": [\r",
+              "                                        1\r",
+              "                                    ]\r",
+              "                                },\r",
+              "                                \"pageInfo\": {\r",
+              "                                    \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/pageInfo\",\r",
+              "                                    \"type\": \"object\",\r",
+              "                                    \"title\": \"The pageInfo schema\",\r",
+              "                                    \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                    \"default\": {},\r",
+              "                                    \"examples\": [\r",
+              "                                        {\r",
+              "                                            \"endCursor\": \"1\",\r",
+              "                                            \"hasNextPage\": false,\r",
+              "                                            \"hasPreviousPage\": false,\r",
+              "                                            \"startCursor\": \"0\"\r",
+              "                                        }\r",
+              "                                    ],\r",
+              "                                    \"required\": [\r",
+              "                                        \"endCursor\",\r",
+              "                                        \"hasNextPage\",\r",
+              "                                        \"hasPreviousPage\",\r",
+              "                                        \"startCursor\"\r",
+              "                                    ],\r",
+              "                                    \"properties\": {\r",
+              "                                        \"endCursor\": {\r",
+              "                                            \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/pageInfo/properties/endCursor\",\r",
+              "                                            \"type\": \"string\",\r",
+              "                                            \"title\": \"The endCursor schema\",\r",
+              "                                            \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                            \"default\": \"\",\r",
+              "                                            \"examples\": [\r",
+              "                                                \"1\"\r",
+              "                                            ]\r",
+              "                                        },\r",
+              "                                        \"hasNextPage\": {\r",
+              "                                            \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/pageInfo/properties/hasNextPage\",\r",
+              "                                            \"type\": \"boolean\",\r",
+              "                                            \"title\": \"The hasNextPage schema\",\r",
+              "                                            \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                            \"default\": false,\r",
+              "                                            \"examples\": [\r",
+              "                                                false\r",
+              "                                            ]\r",
+              "                                        },\r",
+              "                                        \"hasPreviousPage\": {\r",
+              "                                            \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/pageInfo/properties/hasPreviousPage\",\r",
+              "                                            \"type\": \"boolean\",\r",
+              "                                            \"title\": \"The hasPreviousPage schema\",\r",
+              "                                            \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                            \"default\": false,\r",
+              "                                            \"examples\": [\r",
+              "                                                false\r",
+              "                                            ]\r",
+              "                                        },\r",
+              "                                        \"startCursor\": {\r",
+              "                                            \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/pageInfo/properties/startCursor\",\r",
+              "                                            \"type\": \"string\",\r",
+              "                                            \"title\": \"The startCursor schema\",\r",
+              "                                            \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                            \"default\": \"\",\r",
+              "                                            \"examples\": [\r",
+              "                                                \"0\"\r",
+              "                                            ]\r",
+              "                                        }\r",
+              "                                    },\r",
+              "                                    \"additionalProperties\": true\r",
+              "                                },\r",
+              "                                \"items\": {\r",
+              "                                    \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items\",\r",
+              "                                    \"type\": \"array\",\r",
+              "                                    \"title\": \"The items schema\",\r",
+              "                                    \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                    \"default\": [],\r",
+              "                                    \"examples\": [\r",
+              "                                        [\r",
+              "                                            {\r",
+              "                                                \"firstName\": null,\r",
+              "                                                \"lastName\": null,\r",
+              "                                                \"line1\": \"street Pagac Stravenue\",\r",
+              "                                                \"phone\": null,\r",
+              "                                                \"email\": null,\r",
+              "                                                \"countryCode\": \"AL\",\r",
+              "                                                \"postalCode\": \"830000\",\r",
+              "                                                \"regionName\": null,\r",
+              "                                                \"city\": \"Lake Shane\"\r",
+              "                                            }\r",
+              "                                        ]\r",
+              "                                    ],\r",
+              "                                    \"additionalItems\": true,\r",
+              "                                    \"items\": {\r",
+              "                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items\",\r",
+              "                                        \"anyOf\": [\r",
+              "                                            {\r",
+              "                                                \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0\",\r",
+              "                                                \"type\": \"object\",\r",
+              "                                                \"title\": \"The first anyOf schema\",\r",
+              "                                                \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                \"default\": {},\r",
+              "                                                \"examples\": [\r",
+              "                                                    {\r",
+              "                                                        \"firstName\": null,\r",
+              "                                                        \"lastName\": null,\r",
+              "                                                        \"line1\": \"street Pagac Stravenue\",\r",
+              "                                                        \"phone\": null,\r",
+              "                                                        \"email\": null,\r",
+              "                                                        \"countryCode\": \"AL\",\r",
+              "                                                        \"postalCode\": \"830000\",\r",
+              "                                                        \"regionName\": null,\r",
+              "                                                        \"city\": \"Lake Shane\"\r",
+              "                                                    }\r",
+              "                                                ],\r",
+              "                                                \"required\": [\r",
+              "                                                    \"firstName\",\r",
+              "                                                    \"lastName\",\r",
+              "                                                    \"line1\",\r",
+              "                                                    \"phone\",\r",
+              "                                                    \"email\",\r",
+              "                                                    \"countryCode\",\r",
+              "                                                    \"postalCode\",\r",
+              "                                                    \"regionName\",\r",
+              "                                                    \"city\"\r",
+              "                                                ],\r",
+              "                                                \"properties\": {\r",
+              "                                                    \"firstName\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/firstName\",\r",
+              "                                                        \"type\": \"null\",\r",
+              "                                                        \"title\": \"The firstName schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": null,\r",
+              "                                                        \"examples\": [\r",
+              "                                                            null\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"lastName\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/lastName\",\r",
+              "                                                        \"type\": \"null\",\r",
+              "                                                        \"title\": \"The lastName schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": null,\r",
+              "                                                        \"examples\": [\r",
+              "                                                            null\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"line1\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/line1\",\r",
+              "                                                        \"type\": \"string\",\r",
+              "                                                        \"title\": \"The line1 schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": \"\",\r",
+              "                                                        \"examples\": [\r",
+              "                                                            \"street Pagac Stravenue\"\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"phone\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/phone\",\r",
+              "                                                        \"type\": \"null\",\r",
+              "                                                        \"title\": \"The phone schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": null,\r",
+              "                                                        \"examples\": [\r",
+              "                                                            null\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"email\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/email\",\r",
+              "                                                        \"type\": \"null\",\r",
+              "                                                        \"title\": \"The email schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": null,\r",
+              "                                                        \"examples\": [\r",
+              "                                                            null\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"countryCode\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/countryCode\",\r",
+              "                                                        \"type\": \"string\",\r",
+              "                                                        \"title\": \"The countryCode schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": \"\",\r",
+              "                                                        \"examples\": [\r",
+              "                                                            \"AL\"\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"postalCode\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/postalCode\",\r",
+              "                                                        \"type\": \"string\",\r",
+              "                                                        \"title\": \"The postalCode schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": \"\",\r",
+              "                                                        \"examples\": [\r",
+              "                                                            \"830000\"\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"regionName\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/regionName\",\r",
+              "                                                        \"type\": \"null\",\r",
+              "                                                        \"title\": \"The regionName schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": null,\r",
+              "                                                        \"examples\": [\r",
+              "                                                            null\r",
+              "                                                        ]\r",
+              "                                                    },\r",
+              "                                                    \"city\": {\r",
+              "                                                        \"$id\": \"#/properties/data/properties/organization/properties/addresses/properties/items/items/anyOf/0/properties/city\",\r",
+              "                                                        \"type\": \"string\",\r",
+              "                                                        \"title\": \"The city schema\",\r",
+              "                                                        \"description\": \"An explanation about the purpose of this instance.\",\r",
+              "                                                        \"default\": \"\",\r",
+              "                                                        \"examples\": [\r",
+              "                                                            \"Lake Shane\"\r",
+              "                                                        ]\r",
+              "                                                    }\r",
+              "                                                },\r",
+              "                                                \"additionalProperties\": true\r",
+              "                                            }\r",
+              "                                        ]\r",
+              "                                    }\r",
+              "                                }\r",
+              "                            },\r",
+              "                            \"additionalProperties\": true\r",
+              "                        }\r",
+              "                    },\r",
+              "                    \"additionalProperties\": true\r",
+              "                }\r",
+              "            },\r",
+              "            \"additionalProperties\": true\r",
+              "        }\r",
+              "    },\r",
+              "    \"additionalProperties\": true\r",
+              "}\r",
+              "\r",
+              "var jsonData = pm.response.json();\r",
+              "\r",
+              "/*\r",
+              "pm.test('Schema is valid', function() {\r",
+              "  pm.response.to.have.jsonSchema(schema);\r",
+              "});\r",
+              "*/\r",
+              "pm.test('Schema is valid', function() {\r",
+              "  pm.expect (ajv.validate(schema, jsonData)).to.be.true;\r",
+              "});\r",
+              "\r",
+              "pm.test('Schema is valid', function() {\r",
+              "  pm.response.to.have.jsonSchema(schema);\r",
+              "});\r",
+              "\r",
+              "console.log (ajv.errors);\r",
+              "console.log (\"проблема в: \" + ajv.errors[0].keyword + \" в поле: \" + ajv.errors[0].dataPath);\r",
+              "\r",
+              "\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "91d37293-b8a2-44d8-af13-1888b899c90a",
+            "exec": [
+              "/*pm.variables.set(\"key\", \"value\");\r",
+              "// обращение к переменной: pm.variables.get(\"key\");\r",
+              "pm.variables.get(\"key\");\r",
+              "console.log(pm.variables.get(\"key\"));*/"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "eed181b4-f530-4da6-a1a5-908dae56a8e8",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query getOrganizationAddresses($id: String!, $count: Int, $cursor: String, $sort: String) {\r\norganization(id: $id) {\r\nname \r\naddresses(first: $count, after: $cursor, sort: $sort) {\r\ntotalCount\r\npageInfo {\r\nendCursor\r\nhasNextPage\r\nhasPreviousPage\r\nstartCursor\r\n}\r\nitems {\r\nfirstName\r\nlastName\r\nline1\r\nphone\r\nemail\r\ncountryCode\r\npostalCode\r\nregionName\r\ncity\r\n}\r\n}\r\n}\r\n}",
+            "variables": "{\r\n\"id\": \"{{organization_id}}\"\r\n}"
+          },
+          "options": {
+            "graphql": {}
+          }
+        },
+        "url": "{{url}}"
+      },
+      "response": []
+    },
+    {
+      "name": "createContact",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "5e0813cc-4456-4c80-9500-1465a67ca386",
+            "exec": [
+              "pm.test(\"Contact created\", () => {\r",
+              "pm.expect(pm.response.code).to.eql(200);\r",
+              "\r",
+              "const responseJson = pm.response.json();\r",
+              "pm.collectionVariables.set(\"contact_id\", responseJson.data.createContact.id);\r",
+              "});\r",
+              "\r",
+              "/*console.log(responseJson.createContact)\r",
+              "\r",
+              "const globalContactId = postman.getGlobalVariable(\"contact_id\")});\r",
+              "\r",
+              "console.log(globalContactId);\r",
+              "console.log (pm.response)};*/"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "d0e4a019-6696-413f-a9b7-f48abe1bf4a9",
+            "exec": [
+              "pm.variables.set(\"contact_full_name\", pm.variables.replaceIn('contact_QA_{{$randomInt}}'));\r",
+              "pm.variables.set(\"contact_first_name\", pm.variables.replaceIn('{{$randomFirstName}}'));\r",
+              "pm.variables.set(\"contact_last_name\", pm.variables.replaceIn('{{$randomLastName}}'));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "432ebc85-8454-43da-82d9-29ab4f7f528b",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation createContact ($command: InputCreateContactType!) {\n    createContact (command: $command) {\n        fullName\n        id\n        firstName\n        lastName\n        firstName\n        name\n            organizations {\n            items {\n                id \n                name\n            }\n        }\n    }\n}",
+            "variables": "{\n\"command\": {\n\"name\": \"Contact_noneed\",\n\"memberType\": \"Contact\",\n\"addresses\": [],\n\"fullName\": \"{{contact_full_name}}\",\n\"firstName\": \"{{contact_first_name}}\",\n\"lastName\": \"{{contact_last_name}}\",\n\"organizations\": \"{{organization_id}}\"\n}\n}"
+          },
+          "options": {
+            "graphql": {}
+          }
+        },
+        "url": "{{url}}"
+      },
+      "response": []
+    },
+    {
+      "name": "createUser",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "52e507ca-248f-4705-8b98-cb52cf3cee16",
+            "exec": [
+              "/*var jsonData = pm.response.json();\r",
+              "if (jsonData.data.createUser.succeeded === false) {\r",
+              "    console.log(\"Error message: \" + jsonData.data.createUser.errors.code)  \r",
+              "} else if (jsonData.data.createUser.succeeded === true){\r",
+              "    console.log(\"User created\")\r",
+              "} else {\r",
+              "    console.log(\"Error message: User not created\")\r",
+              "};*/\r",
+              "\r",
+              "\r",
+              "var jsonData = pm.response.json();\r",
+              "if (jsonData.data.createUser.succeeded === false) {\r",
+              "jsonData.data.createUser.errors.forEach (element => console.log (element));\r",
+              "} else if (jsonData.data.createUser.succeeded === true){\r",
+              "    console.log(\"User created\")\r",
+              "} else {\r",
+              "    console.log(\"Error message: User not created\")\r",
+              "};\r",
+              "\r",
+              "pm.test(\"User created\", () => {\r",
+              "pm.expect(pm.response.code).to.eql(200);\r",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "5d178aef-07a8-40a3-97b6-f4e14de19318",
+            "exec": [
+              "/*pm.variables.set (\"userName\",\"user_name\")\r",
+              "user_name = pm.variables.replaceIn(\"user_{{$randomFirstName}}\");\r",
+              "\r",
+              "\r",
+              "let userName = pm.variables.replaceIn(\"{{$randomInt}}\")\r",
+              "pm.variables.set(\"userName\", `${userName}_${Date.now()}@myDomain.co.uk`)\r",
+              "\r",
+              "pm.environment.set(\"Email\", pm.globals.get(\"$randomUserName\") + \"@myDomain.co.uk\");*/\r",
+              "\r",
+              "\r",
+              "pm.variables.set(\"user_name\", pm.variables.replaceIn('user_QA_{{$randomInt}}'));\r",
+              "\r",
+              "pm.variables.set(\"user_email\", pm.variables.replaceIn('Useremail{{$randomInt}}@usermail.com'));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "07f695a7-5174-48e4-bdaa-22ecabfac8ef",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation createUser ($command: InputCreateUserType!) {\n    createUser (command: $command) {\n        errors {\n            code\n            description\n        }\n        succeeded  \n    }\n}",
+            "variables": "{\n\"command\": {\n\"createdBy\": \"Main_User\",\n\"email\": \"{{user_email}}\",\n\"password\": \"{{user_password}}\",\n\"userName\": \"{{user_name}}\",\n\"userType\": \"Customer\",\n\"memberId\": \"{{contact_id}}\"\n}\n}"
+          },
+          "options": {
+            "graphql": {}
+          }
+        },
+        "url": "{{url}}"
+      },
+      "response": []
+    },
+    {
+      "name": "Token Copy",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "122b5aa1-e4f4-4150-a7c1-e58991ab716e",
+            "exec": [
+              "pm.test(\"User\", () => {\r",
+              "pm.expect(pm.response.code).to.eql(200);\r",
+              "\r",
+              "const responseJson = pm.response.json();\r",
+              "const onlyToken = responseJson.access_token;\r",
+              "\r",
+              "pm.collectionVariables.set(\"user_token\", onlyToken);\r",
+              "\r",
+              "console.log(pm.collectionVariables.get(\"user_token\"))});"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "2d201dcb-b2be-4176-8ad9-e3ef841ab759",
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "30b148cb-8ab1-4ebe-8a38-2a0eada79f56",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true,
+        "disabledSystemHeaders": {
+          "content-type": true
+        }
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "grant_type=password&username={{New_user_name}}&password={{user_password}}",
+          "options": {
+            "raw": {}
+          }
+        },
+        "url": "https://webstore-platform.qa.govirto.com/connect/token"
+      },
+      "response": []
+    },
+    {
+      "name": "Login as user Copy",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "b0b73f7e-ec2b-4f7c-9cf4-0b4180d861bb",
+            "exec": [
+              "pm.test(\"loginAsUser\", () => {\r",
+              "pm.expect(pm.response.code).to.eql(200);\r",
+              "console.log(pm.response.json())\r",
+              "\r",
+              "const responseJson = pm.response.json();\r",
+              "pm.expect(responseJson.data.me.contact.organizations.items[0].name).to.not.empty;\r",
+              "\r",
+              "console.log(responseJson.data.me.contact)\r",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "e3387992-abbe-48d4-a784-501ce3c426a1",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "token": "{{user_token}}"
+          }
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query me  {\n    me {\n        id\n        userName\n        email\n        contact {\n            name\n            organizations {\n                items {\n                    name\n                }\n\t\t\t}\n        }\n    }\n}",
+            "variables": ""
+          },
+          "options": {
+            "graphql": {}
+          }
+        },
+        "url": "{{url}}"
+      },
+      "response": []
+    },
+    {
+      "name": "array headers",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "8b30af6a-18bd-47c7-b8c6-81eb1e28ac24",
+            "exec": [
+              "/*console.log (pm.response.headers.members);\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "// список все заголовков списком объектов\r",
+              "pm.response.headers.members.forEach (anyname => console.log (anyname));\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "\r",
+              "// список все заголовков в текстовом виде. 3 записи ниже одинаковые\r",
+              "// запись 1\r",
+              "pm.response.headers.members.forEach (anyname => console.log (anyname.key + \": \" + anyname.value));\r",
+              "\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "// запись 2. разница записи 1 и 2 в назначении переменной headers для упрощения записи.\r",
+              "headers = pm.response.headers.members;\r",
+              "headers.forEach (anyname => console.log (anyname.key + \": \" + anyname.value));\r",
+              "\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "// запись 3. запись отличается от 1 и 2 , тем что вместо лямбды здесь пишется полностью слово функция.\r",
+              "pm.response.headers.members.forEach (function(anyname) {console.log (anyname.key + \": \" + anyname.value)});\r",
+              "\r",
+              "console.log(\"*****************************************************\")\r",
+              "*/\r",
+              "\r",
+              "\r",
+              "// вывести номера заголовков с  ключами и значениями. обе записи одинаковые\r",
+              "pm.response.headers.members.forEach (function(anyname, index) {console.log (index + \" \" + anyname.key + \": \" + anyname.value)});\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "headers = pm.response.headers.members;\r",
+              "function myFunction (anyname, index){\r",
+              "    console.log (index + \" header :\"  + anyname.key + \": \" + anyname.value);\r",
+              "}\r",
+              "headers.forEach (myFunction);\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "// вывод порядка элементов с номерами и только значениями, обе записи одинаковые\r",
+              "headers = pm.response.headers.members;\r",
+              "function myFunction1 (anyname, index){\r",
+              "    console.log (index + \" header: \" + anyname);\r",
+              "}\r",
+              "headers.forEach (myFunction1);\r",
+              "console.log(\"*****************************************************\")\r",
+              "\r",
+              "// вывести номера заголовков\r",
+              "headers = pm.response.headers.members;\r",
+              "function myFunction2 (anyname, index, arr){\r",
+              "    arr [index] = anyname +\" текст\"\r",
+              "    console.log (index + \" header: \" + arr [index]);\r",
+              "}\r",
+              "headers.forEach (myFunction2);\r",
+              "console.log(\"*****************************************************\")"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "00b54449-3c1b-4b53-80a0-bebc44ebfde0",
+            "exec": [
+              "/*pm.variables.set(\"key\", \"value\");\r",
+              "// обращение к переменной: pm.variables.get(\"key\");\r",
+              "pm.variables.get(\"key\");\r",
+              "console.log(pm.variables.get(\"key\"));*/"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "1869d86f-2390-4239-8254-d68883c64aa8",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query getOrganizationAddresses($id: String!, $count: Int, $cursor: String, $sort: String) {\r\norganization(id: $id) {\r\nname \r\naddresses(first: $count, after: $cursor, sort: $sort) {\r\ntotalCount\r\npageInfo {\r\nendCursor\r\nhasNextPage\r\nhasPreviousPage\r\nstartCursor\r\n}\r\nitems {\r\nfirstName\r\nlastName\r\nline1\r\nphone\r\nemail\r\ncountryCode\r\npostalCode\r\nregionName\r\ncity\r\n}\r\n}\r\n}\r\n}",
+            "variables": "{\r\n\"id\": \"{{organization_id}}\"\r\n}"
+          },
+          "options": {
+            "graphql": {}
+          }
+        },
+        "url": "{{url}}"
+      },
+      "response": []
+    },
+    {
+      "name": "RedEx",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "ac769fc7-bad0-4468-9cb0-4e77a9eba6e8",
+            "exec": [
+              "    var jsonData = pm.response.json();\r",
+              "    \r",
+              "pm.test(\"в системе есть название\", function () {\r",
+              "    pm.expect(jsonData.data.organization.name).to.match(/^Organization_QA_\\w+$/);\r",
+              "});  \r",
+              "\r",
+              "pm.test(\"в названии организации не меньше 2 цифр\", function () {\r",
+              "    pm.expect(jsonData.data.organization.name).to.match(/^Organization_QA_\\w{2,}$/);\r",
+              "}); "
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "c055dc56-e375-4c68-b39f-18539577c9bb",
+            "exec": [
+              "\r",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "f55d0f91-7081-4420-88a6-c2f1eebf9dcb",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query getOrganizationAddresses($id: String!, $count: Int, $cursor: String, $sort: String) {\r\norganization(id: $id) {\r\nname \r\naddresses(first: $count, after: $cursor, sort: $sort) {\r\ntotalCount\r\npageInfo {\r\nendCursor\r\nhasNextPage\r\nhasPreviousPage\r\nstartCursor\r\n}\r\nitems {\r\nfirstName\r\nlastName\r\nline1\r\nphone\r\nemail\r\ncountryCode\r\npostalCode\r\nregionName\r\ncity\r\n}\r\n}\r\n}\r\n}",
+            "variables": "{\r\n\"id\": \"{{organization_id}}\"\r\n}"
+          },
+          "options": {
+            "graphql": {}
+          }
+        },
+        "url": "{{url}}"
+      },
+      "response": []
+    },
+    {
+      "name": "sendRequest",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "fb139028-72b7-4343-b2f2-5f39799dfc6b",
+            "exec": [
+              "/*pm.test(\"Organization created\", () => {\r",
+              "pm.expect(pm.response.code).to.eql(200);\r",
+              "\r",
+              "const responseJson = pm.response.json();\r",
+              "\r",
+              "pm.collectionVariables.set(\"organization_id\", responseJson.data.createOrganization.id);\r",
+              "});\r",
+              "\r",
+              "const globalOrganizationId = postman.getGlobalVariable(\"organization_id\")\r",
+              "\r",
+              "console.log(globalOrganizationId)});\r",
+              "\r",
+              "console.log(pm.collectionVariables.get(\"organization_id\"));\r",
+              "console.log(pm.variables.get(\"organization_id\"));\r",
+              "\r",
+              "// Example with a plain string URL, чтобы добавитьп переменную нужно выбрать справа Окружение\r",
+              "pm.sendRequest('https://postman-echo.com/get', (error, response) => {\r",
+              "  if (error) {\r",
+              "    console.log(error);\r",
+              "  } else {\r",
+              "  pm.environment.set(\"variable_key\",\"new_value\");\r",
+              "      console.log(\"успех\");\r",
+              "  }\r",
+              "});\r",
+              "\r",
+              "\r",
+              "\r",
+              "// Example with a full-fledged request\r",
+              "const postRequest = {\r",
+              "  url: 'https://postman-echo.com/post',\r",
+              "  method: 'POST',\r",
+              "  header: {\r",
+              "    'Content-Type': 'application/json',\r",
+              "    'X-Foo': 'bar'\r",
+              "  },\r",
+              "  body: {\r",
+              "    mode: 'raw',\r",
+              "    raw: JSON.stringify({ key: 'this is json' })\r",
+              "  }\r",
+              "};\r",
+              "\r",
+              "pm.sendRequest(postRequest, (error, response) => {\r",
+              "  if (error) {\r",
+              "    console.log(error);\r",
+              "  } else {\r",
+              "  pm.environment.set(\"variable_key\",\"new_value\");\r",
+              "      console.log(\"успех2\");\r",
+              "  }\r",
+              "});\r",
+              "\r",
+              "pm.sendRequest(postRequest, (error, response) => {\r",
+              "  console.log(error ? error : response.json());\r",
+              "});\r",
+              "\r",
+              "\r",
+              "\r",
+              "const postRequest = {\r",
+              "  url: 'https://postman-echo.com/post',\r",
+              "  method: 'POST',\r",
+              "  header: {\r",
+              "    'Content-Type': 'application/json',\r",
+              "    'X-Foo': 'bar'\r",
+              "  },\r",
+              "  body: {\r",
+              "    mode: 'raw',\r",
+              "    raw: JSON.stringify({ key: 'this is json' })\r",
+              "  }\r",
+              "};\r",
+              "\r",
+              "\r",
+              "\r",
+              "// Example containing a test\r",
+              "pm.sendRequest(postRequest, (error, response) => {\r",
+              "  if (error) {\r",
+              "    console.log(error);\r",
+              "  }\r",
+              "\r",
+              "  pm.test('response should be okay to process', () => {\r",
+              "    pm.expect(error).to.equal(null);\r",
+              "    pm.expect(response).to.have.property('code', 200);\r",
+              "    pm.expect(response).to.have.property('status', 'OK');\r",
+              "  });\r",
+              "});\r",
+              "\r",
+              "\r",
+              "\r",
+              "// snippets\r",
+              "pm.sendRequest(\"https://postman-echo.com/get\", function (err, response) {\r",
+              "    console.log(response.json());\r",
+              "});*/\r",
+              "\r",
+              "const postRequest = {\r",
+              "  url: 'https://webstore-platform.qa.govirto.com/connect/token',\r",
+              "  method: 'POST',\r",
+              "  header: {\r",
+              "    'Content-Type': 'application/json',\r",
+              "  },\r",
+              "  body: {\r",
+              "    mode: 'query',\r",
+              "    raw: JSON.stringify({ \r",
+              "\"command\": {\r",
+              "\"name\":\"{{organization_name}}\",   \r",
+              "\"addresses\": [{\r",
+              "\"addressType\": 1,\r",
+              "\"city\": \"{{city}}\",\r",
+              "\"countryCode\": \"USA\",\r",
+              "\"countryName\": \"United States of America\",\r",
+              "\"regionId\": \"AL\",\r",
+              "\"regionName\": \"Alabama\",\r",
+              "\"postalCode\": \"830000\",\r",
+              "\"line1\": \"{{line1}}\",\r",
+              "\"zip\": \"830001\"\r",
+              "}]     \r",
+              "}\r",
+              "})\r",
+              "  }\r",
+              "};\r",
+              "pm.sendRequest(postRequest, (error, response) => {\r",
+              "  console.log(error ? error : response.json());\r",
+              "});\r",
+              "  "
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "20e9a1b2-bd1e-4491-b31a-b6cf1879accb",
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "f1bce1b6-4f8f-4707-936e-7940cf9813bd",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "api_key",
+            "value": "ce3d045144724f2b9ad070180f3c7b82",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation createOrganization ($command: InputCreateOrganizationType!) {\ncreateOrganization (command: $command) {\nid\nname\naddresses {\nitems {\ncity\ncountryCode\ncountryName\nregionId\nregionName\npostalCode\nline1\nzip\n}\n}   \n}\n} ",
+            "variables": "{\n\"command\": {\n\"name\":\"{{organization_name}}\",   \n\"addresses\": [{\n\"addressType\": 1,\n\"city\": \"{{city}}\",\n\"countryCode\": \"USA\",\n\"countryName\": \"United States of America\",\n\"regionId\": \"AL\",\n\"regionName\": \"Alabama\",\n\"postalCode\": \"830000\",\n\"line1\": \"{{line1}}\",\n\"zip\": \"830001\"\n}]     \n}\n}"
+          },
+          "options": {
+            "graphql": {}
+          }
+        },
+        "url": "{{url}}"
+      },
+      "response": []
+    },
+    {
+      "name": "&& ||",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "68494171-5b51-496e-9b5f-ab5beb6d2fe6",
+            "exec": [
+              "pm.test(pm.response.code === 200 || pm.response.code === 201); {\r",
+              "    console.log ( \"сработал ||\")\r",
+              "};\r",
+              "\r",
+              "\r",
+              "pm.test(pm.response.code === 200 && pm.response.to.have.header (\"Content-Type\")); {\r",
+              "    console.log (\"сработал &&\")\r",
+              "}\r",
+              "\r",
+              "pm.test(!(pm.response.code === 404)); {\r",
+              "    console.log ( \"сработал not\")\r",
+              "};"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "89ea2980-2b78-4ea0-9578-875cddd9ed6c",
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "7fffb4f2-450a-4993-93b6-5f4bd146aaf1",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "api_key",
+            "value": "ce3d045144724f2b9ad070180f3c7b82",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation createOrganization ($command: InputCreateOrganizationType!) {\ncreateOrganization (command: $command) {\nid\nname\naddresses {\nitems {\ncity\ncountryCode\ncountryName\nregionId\nregionName\npostalCode\nline1\nzip\n}\n}   \n}\n} ",
+            "variables": "{\n\"command\": {\n\"name\":\"{{organization_name}}\",   \n\"addresses\": [{\n\"addressType\": 1,\n\"city\": \"{{city}}\",\n\"countryCode\": \"USA\",\n\"countryName\": \"United States of America\",\n\"regionId\": \"AL\",\n\"regionName\": \"Alabama\",\n\"postalCode\": \"830000\",\n\"line1\": \"{{line1}}\",\n\"zip\": \"830001\"\n}]     \n}\n}"
+          },
+          "options": {
+            "graphql": {}
+          }
+        },
+        "url": "{{url}}"
+      },
+      "response": []
+    },
+    {
+      "name": "Contact full info",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "c76f3115-94cd-49ce-8e7d-906fa7b5437e",
+            "exec": [
+              "var jsonData = pm.response.json();\r",
+              "\r",
+              "pm.test(\"New_user_name created\", () => {\r",
+              "pm.expect(pm.response.code).to.eql(200);\r",
+              "\r",
+              "const responseJson = pm.response.json();\r",
+              "pm.collectionVariables.set(\"New_user_name\", responseJson.data.contact.securityAccounts[0].userName);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Created user name is eql to variables New_user_name\", () => {\r",
+              "pm.expect(jsonData.data.contact.securityAccounts[0].userName).to.eql(pm.collectionVariables.get(\"New_user_name\"));\r",
+              "\r",
+              "console.log (jsonData.data.contact.securityAccounts[0].userName);\r",
+              "console.log (jsonData.data.contact.securityAccounts[0].email);\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "0037265d-1df2-4434-93ec-c6a06370b4c8",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query contact ($id: String!){\ncontact (id: $id) {\nid \nfullName\nsecurityAccounts {\n  userName\n  email\n}\n}\n}",
+            "variables": "{\n\"id\": \"{{contact_id}}\"\n}"
+          },
+          "options": {
+            "graphql": {}
+          }
+        },
+        "url": "{{url}}"
+      },
+      "response": []
+    },
+    {
+      "name": "RedEx",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "73d6268a-e3ee-4002-90a1-a11af565bc1a",
+            "exec": [
+              "    var jsonData = pm.response.json();\r",
+              "    \r",
+              "pm.test(\"в системе есть название\", function () {\r",
+              "    pm.expect(jsonData.data.organization.name).to.match(/^Organization_QA_\\w+$/);\r",
+              "});  \r",
+              "\r",
+              "pm.test(\"в названии организации не меньше 2 цифр\", function () {\r",
+              "    pm.expect(jsonData.data.organization.name).to.match(/^Organization_QA_\\w{2,}$/);\r",
+              "}); "
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "13b90983-1e49-49a1-a09b-0fefe8083c25",
+            "exec": [
+              "\r",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "8d6b836a-5b15-48c7-8e9b-20272ee8b244",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query getOrganizationAddresses($id: String!, $count: Int, $cursor: String, $sort: String) {\r\norganization(id: $id) {\r\nname \r\naddresses(first: $count, after: $cursor, sort: $sort) {\r\ntotalCount\r\npageInfo {\r\nendCursor\r\nhasNextPage\r\nhasPreviousPage\r\nstartCursor\r\n}\r\nitems {\r\nfirstName\r\nlastName\r\nline1\r\nphone\r\nemail\r\ncountryCode\r\npostalCode\r\nregionName\r\ncity\r\n}\r\n}\r\n}\r\n}",
+            "variables": "{\r\n\"id\": \"{{organization_id}}\"\r\n}"
+          },
+          "options": {
+            "graphql": {}
+          }
+        },
+        "url": "{{url}}"
+      },
+      "response": []
+    },
+    {
+      "name": "createOrganization",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "96df06bd-4e13-4478-911b-f3057ce0e0e6",
+            "exec": [
+              "pm.test(\"Organization created\", () => {\r",
+              "pm.expect(pm.response.code).to.eql(200);\r",
+              "\r",
+              "const responseJson = pm.response.json();\r",
+              "\r",
+              "pm.collectionVariables.set(\"organization_id\", responseJson.data.createOrganization.id);\r",
+              "});\r",
+              "\r",
+              "/*const globalOrganizationId = postman.getGlobalVariable(\"organization_id\")\r",
+              "\r",
+              "console.log(globalOrganizationId)});\r",
+              "\r",
+              "console.log(pm.collectionVariables.get(\"organization_id\"));\r",
+              "console.log(pm.variables.get(\"organization_id\"));*/\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "377d2ee4-fe48-474f-8ded-7d70877592c4",
+            "exec": [
+              "pm.variables.set(\"organization_name\", pm.variables.replaceIn('Organization_QA_{{$randomInt}}'));\r",
+              "pm.variables.set(\"line1\", pm.variables.replaceIn('street {{$randomStreetName}}'));\r",
+              "pm.variables.set(\"city\", pm.variables.replaceIn('{{$randomCity}}'));\r",
+              "pm.variables.set(\"countryCode\", pm.variables.replaceIn('{{$randomCountryCode}}'));\r",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "_postman_id": "39a8ad30-2636-411b-9977-a0503ddf50f5",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "api_key",
+            "value": "ce3d045144724f2b9ad070180f3c7b82",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation createOrganization ($command: InputCreateOrganizationType!) {\ncreateOrganization (command: $command) {\nid\nname\naddresses {\nitems {\ncity\ncountryCode\ncountryName\npostalCode\nline1\nzip\n}\n}   \n}\n} ",
+            "variables": "{\n\"command\": {\n\"name\":\"{{organization_name}}\",   \n\"addresses\": [{\n\"addressType\": 1,\n\"city\": \"{{city}}\",\n\"countryCode\": \"{{countryCode}}\",\n\"countryName\": \"{{countryCode}}\",\n\"postalCode\": \"830000\",\n\"line1\": \"{{line1}}\",\n\"zip\": \"830001\"\n}]     \n}\n}"
+          },
+          "options": {
+            "graphql": {}
+          }
+        },
+        "url": "{{url}}"
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": {
+      "accessTokenUrl": "https://webstore-platform.qa.govirto.com/connect/token",
+      "tokenName": "TokenAdmin",
+      "challengeAlgorithm": "S256",
+      "username": "admin",
+      "password": "store",
+      "grant_type": "password_credentials",
+      "addTokenTo": "header",
+      "client_authentication": "header"
+    }
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "id": "52c4accd-02ed-4a8f-8d2b-8a0a607b3eeb",
+        "type": "text/javascript",
+        "exec": [
+          "pm.variables.replaceIn('{{$randomFirstName}}')",
+          "pm.variables.replaceIn('{{$randomLastName}}')"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "id": "ba6792b2-1b71-4f6a-8bf7-76a1bdb57896",
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "id": "119c8872-93d2-48e8-9681-47c3ffddfb3a",
+      "key": "url",
+      "value": "https://webstore-platform.qa.govirto.com/graphql",
+      "type": "string"
+    },
+    {
+      "id": "b1d24ce1-4182-42c4-b0bb-5a229e28b257",
+      "key": "contact_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "id": "eb3b6133-60db-4bba-be6f-e734aa5ace5b",
+      "key": "organization_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "id": "0a6d016f-ed91-42e9-82eb-f211d0ee13f0",
+      "key": "user_password",
+      "value": "Password1!",
+      "type": "string"
+    },
+    {
+      "id": "dc629f59-8eac-437f-abf8-284f28f853e7",
+      "key": "Member",
+      "value": "Member_noneed",
+      "type": "string"
+    },
+    {
+      "id": "860c18df-a53e-4ba8-90de-35e9166258b5",
+      "key": "user_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "id": "1856a510-cb69-45dc-9a5a-9772a6cb2ae3",
+      "key": "New_user_name",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
