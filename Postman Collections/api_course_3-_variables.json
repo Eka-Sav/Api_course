@@ -1,0 +1,142 @@
+{
+  "info": {
+    "_postman_id": "eb0e2888-e5b7-40fd-b43a-0440f519234a",
+    "name": "Variable",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": {
+      "accessTokenUrl": "https://webstore-platform.qa.govirto.com/connect/token",
+      "tokenName": "TokenAdmin",
+      "challengeAlgorithm": "S256",
+      "username": "admin",
+      "password": "store",
+      "grant_type": "password_credentials",
+      "addTokenTo": "header",
+      "client_authentication": "header"
+    }
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "id": "990d273a-1bbf-4f5c-8d17-895bd035f244",
+        "type": "text/javascript",
+        "exec": [
+          "pm.variables.replaceIn('{{$randomFirstName}}')",
+          "pm.variables.replaceIn('{{$randomLastName}}')"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "id": "5024be5d-bd46-42e5-bb5c-0c365da212eb",
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "id": "3800dd0c-09b3-45fb-9bce-d7890633be54",
+      "key": "url",
+      "value": "https://webstore-platform.qa.govirto.com/graphql",
+      "type": "string"
+    },
+    {
+      "id": "f6aae168-2011-4a15-80cd-8be43e0a3ce7",
+      "key": "contact_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "id": "a72e2779-cc03-4857-8a98-992c1af36e2d",
+      "key": "organization_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "id": "de79f35c-569f-4301-b5d3-f0a7269f4100",
+      "key": "organization_name",
+      "value": "Organization_noneed_{{$randomInt}}",
+      "type": "string"
+    },
+    {
+      "id": "466e83fc-f3bd-4b86-ba2f-71cfd78643d4",
+      "key": "contact_full_name",
+      "value": "contact_noneed_{{$randomInt}}",
+      "type": "string"
+    },
+    {
+      "id": "09b4c505-7002-4899-b50a-83996a28ce3c",
+      "key": "contact_first_name",
+      "value": "{{$randomFirstName}}",
+      "type": "string"
+    },
+    {
+      "id": "5798d310-0464-49e9-81ea-610c0af9b40b",
+      "key": "contact_last_name",
+      "value": "{{$randomLastName}}",
+      "type": "string"
+    },
+    {
+      "id": "e4bdee58-7383-4970-97ff-f3fb805488a3",
+      "key": "user_name",
+      "value": "User_noneed_3",
+      "type": "string"
+    },
+    {
+      "id": "ec6553d4-35d8-49b4-b6ad-6ca989ad2522",
+      "key": "user_email",
+      "value": "User_email_{{$randomInt}}@usermail.com",
+      "type": "string"
+    },
+    {
+      "id": "cfb61bbe-906b-4129-8c41-d59cb7a36c7e",
+      "key": "user_password",
+      "value": "Password1!",
+      "type": "string"
+    },
+    {
+      "id": "76807866-9139-40ba-9d23-d7bfc81c9ed1",
+      "key": "Member",
+      "value": "Member_noneed",
+      "type": "string"
+    },
+    {
+      "id": "9cbfcb52-2b77-4aba-b46f-68e9d7cd182b",
+      "key": "user_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "id": "66ad0141-7e6e-45b9-8bc2-036c83fabb1b",
+      "key": "line1",
+      "value": "{{$randomStreetName}}",
+      "type": "string"
+    },
+    {
+      "id": "4890389d-cb44-4044-998a-3d0376e3d787",
+      "key": "city",
+      "value": "{{$randomCity}}",
+      "type": "string"
+    },
+    {
+      "id": "58563044-9a95-47df-b866-abde3b69c31d",
+      "key": "countryName",
+      "value": "{{$randomCountry}}",
+      "type": "string"
+    },
+    {
+      "id": "24f8d2f1-b45b-44df-b124-4271ff31770c",
+      "key": "Username",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
